@@ -1,0 +1,4 @@
+Channels are the gateway provided by Java NIO to access the native I/O mechanism. 
+We should use buffers to interact with the channels, 
+so the channel is like a bridge between two entities to do the I/O. 
+Buffers are the endpoints provided by channels to send and receive data.
