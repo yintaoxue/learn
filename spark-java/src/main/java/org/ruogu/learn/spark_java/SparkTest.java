@@ -3,6 +3,7 @@ package org.ruogu.learn.spark_java;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -25,7 +26,42 @@ public class SparkTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		sparkWordCountLambda();
+//		sparkWordCountLambda();
+//		map();
+//		flatmap();
+		reduce();
+	}
+	
+	public static void map() {
+		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
+		JavaSparkContext sc = new JavaSparkContext(conf);
+		
+		JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 3, 4));
+		JavaRDD<Integer> result = rdd.map(x -> x * x);
+		
+		String rs = StringUtils.join(result.collect(), ",");
+		System.out.println(rs);
+	}
+	
+	public static void flatmap() {
+		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
+		JavaSparkContext sc = new JavaSparkContext(conf);
+		
+		JavaRDD<String> rdd = sc.parallelize(Arrays.asList("a b", "c d"));
+		JavaRDD<String> result = rdd.flatMap(x -> Arrays.asList(x.split(" ")));
+		
+		String rs = StringUtils.join(result.collect(), ",");
+		System.out.println(rs);
+	}
+	
+	public static void reduce() {
+		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
+		JavaSparkContext sc = new JavaSparkContext(conf);
+		
+		JavaRDD<Integer> rdd = sc.parallelize(Arrays.asList(1, 2, 3, 4));
+		Integer sum = rdd.reduce((x, y) -> x + y);
+		
+		System.out.println(sum);
 	}
 	
 	public static void loadData() {
@@ -50,7 +86,7 @@ public class SparkTest {
 	}
 	
 	/**
-	 * 使用java8 lambda 实现的 spark wordcount mr
+	 * 使用java8 lambda 实现的 spark wordcount
 	 */
 	public static void sparkWordCountLambda() {
 		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
@@ -68,7 +104,7 @@ public class SparkTest {
 	}
 	
 	/**
-	 * 使用Java内部类实现的spark wordcount MR
+	 * 使用Java内部类实现的spark wordcount
 	 */
 	public static void sparkWordCount() {
 		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
