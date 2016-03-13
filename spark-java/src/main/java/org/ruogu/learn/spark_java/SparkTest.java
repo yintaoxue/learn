@@ -25,13 +25,16 @@ public class SparkTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+		sparkWordCountLambda();
 	}
 	
 	public static void loadData() {
 		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		JavaRDD<String> lines = sc.parallelize(Arrays.asList("pandas", "i like pandas"));
+		
+		long c = lines.count();
+		List<String> subList = lines.take(10);
 		
 		// 匿名内部类的方式传入函数
 		JavaRDD<String> error = lines.filter(new Function<String , Boolean>() {
@@ -46,13 +49,33 @@ public class SparkTest {
 		
 	}
 	
-	public static void sparkMR() {
+	/**
+	 * 使用java8 lambda 实现的 spark wordcount mr
+	 */
+	public static void sparkWordCountLambda() {
+		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
+		JavaSparkContext sc = new JavaSparkContext(conf);
+		JavaRDD<String> lines = sc.textFile("/opt/data/tmp/wordcount.txt");
+
+		// Split up into words.
+		JavaRDD<String> words = lines.flatMap(line -> Arrays.asList(line.split(" ")));
+
+		// Transform into pairs and count.
+		JavaPairRDD<String, Integer> counts = words.mapToPair( w -> new Tuple2<String, Integer>(w, 1))
+				.reduceByKey( (x, y) -> x + y);
+		
+		counts.saveAsTextFile("/opt/data/tmp/wordcount-spark-output-lambda");
+	}
+	
+	/**
+	 * 使用Java内部类实现的spark wordcount MR
+	 */
+	public static void sparkWordCount() {
 		SparkConf conf = new SparkConf().setMaster("local").setAppName("My App");
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		JavaRDD<String> input = sc.textFile("/opt/data/tmp/wordcount.txt");
 		
-		long c = input.count();
-		List<String> subList = input.take(10);
+
 
 		// Split up into words.
 		JavaRDD<String> words = input.flatMap(new FlatMapFunction<String, String>() {
