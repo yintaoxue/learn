@@ -20,11 +20,13 @@ public class SetTest {
 		Set<Long> set = new HashSet<Long>();
 		set.add(55L);
 		set.add(56L);
+		set.add(1000L);
 		
 		System.out.println("Set<Long>:" + set);
 		System.out.println("set.contains(55L):" + set.contains(55L));
 		System.out.println("set.contains(56L):" + set.contains(56L));
 		System.out.println("set.contains(56):" + set.contains(56));
+		System.out.println("set.contains(1000L):" + set.contains(1000L));
 		System.out.println("set.contains(new Long(56)):" + set.contains(new Long(56)));
 		
 		Set<String> setStr = new HashSet<String>();
@@ -41,6 +43,8 @@ public class SetTest {
 		lset.add(56L);
 		System.out.println(lset);
 		
+		HashSet<Long> llset = new HashSet<Long>();
+		llset.iterator();
 	}
 
 }
